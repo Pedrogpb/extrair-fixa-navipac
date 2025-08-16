@@ -9,16 +9,23 @@ import zipfile
 #----------------------------------------------#
 ### FUNÇÕES ###
 #----------------------------------------------#
-def limpar_e_converter(valor, corte):
-    """Limpa e converte um valor de linha para um número inteiro."""
+def limpar_e_converter_arredondando(valor, corte):
+    """Limpa e converte um valor de linha para um número inteiro, arredondando-o."""
     if len(valor) > corte:
         texto = valor[corte:]
     else:
         texto = ""
-    texto = texto.split(',')[0].split('.')[0].strip()
+
+    # Substitui a vírgula por ponto para permitir a conversão para float
+    texto = texto.split(' ')[0].replace(',', '.').strip()
+    
     try:
-        return int(texto)
-    except ValueError:
+        # Tenta converter para float
+        numero_float = float(texto)
+        # Arredonda e converte para int
+        return int(round(numero_float))
+    except (ValueError, IndexError):
+        # Captura tanto o erro de conversão quanto de índice (caso a string esteja vazia)
         return 0
 
 #--------------------------------------------------------------#
@@ -94,9 +101,9 @@ if st.button("Extrair"):
                 linha_12 = conteudo[11] if len(conteudo) > 11 else ""
                 linha_13 = conteudo[12] if len(conteudo) > 12 else ""
 
-                este = limpar_e_converter(linha_11, 57)
-                norte = limpar_e_converter(linha_12, 56)
-                prof = limpar_e_converter(linha_13, 61)
+                este = limpar_e_converter_arredondando(linha_11, 57)
+                norte = limpar_e_converter_arredondando(linha_12, 56)
+                prof = limpar_e_converter_arredondando(linha_13, 61)
                 nome_arquivo_sem_extensao = nome_arquivo.split('/')[-1].replace('.npc','')
 
                 ws.append([nome_arquivo_sem_extensao, norte, este, prof])
